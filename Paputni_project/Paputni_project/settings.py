@@ -26,6 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -77,7 +78,7 @@ WSGI_APPLICATION = 'Paputni_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }

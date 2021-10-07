@@ -22,7 +22,7 @@ class Order(models.Model):
     departure_station = models.CharField(max_length=200,null=True)  # jo'nab ketish bekati
     arrival_station = models.CharField(max_length=200,null=True)  # yetib borish bekati
     departure_time = models.DateTimeField(null=True)  # jo'nab ketish vaqti
-    number_of_vacancies = models.IntegerField(default=1)  # bo'sh o'rinlar soni
+    number_of_vacancies = models.IntegerField(default=1,null=True)  # bo'sh o'rinlar soni
     sex = models.CharField(max_length=50, default="Ixtiyoriy", choices=jinsi)
     price = models.CharField(max_length=200,null=True)
     car_picture = models.ImageField(null=True)
