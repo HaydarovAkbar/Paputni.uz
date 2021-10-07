@@ -17,20 +17,20 @@ class Order(models.Model):
     full_name = models.CharField(max_length=200, null=True)
     phone_number = models.CharField(max_length=13, null=True)  # +998990010101
     telegram_akkount = models.CharField(max_length=300, null=True)  # https://t.me/Poputni_uz
-    add_date = models.DateTimeField(auto_now_add=True, null=True)
+    add_date = models.DateTimeField(auto_now_add=True, null=True,blank=True)
     about_car = models.CharField(max_length=1000, null=True, blank=True)
-    departure_station = models.CharField(max_length=200)  # jo'nab ketish bekati
-    arrival_station = models.CharField(max_length=200)  # yetib borish bekati
+    departure_station = models.CharField(max_length=200,null=True)  # jo'nab ketish bekati
+    arrival_station = models.CharField(max_length=200,null=True)  # yetib borish bekati
     departure_time = models.DateTimeField(null=True)  # jo'nab ketish vaqti
     number_of_vacancies = models.IntegerField(default=1)  # bo'sh o'rinlar soni
     sex = models.CharField(max_length=50, default="Ixtiyoriy", choices=jinsi)
-    price = models.CharField(max_length=200)
+    price = models.CharField(max_length=200,null=True)
     car_picture = models.ImageField(null=True)
     description = models.CharField(max_length=200, null=True, blank=True)
     code = models.CharField(max_length=6, default="000000", null=True, blank=True)
-    edited_date = models.DateTimeField(auto_now_add=True, null=True)
-    longitude = models.CharField(max_length=40, null=True)
-    latitude = models.CharField(max_length=40, null=True)
+    edited_date = models.DateTimeField(auto_now_add=True, null=True,blank=True)
+    longitude = models.CharField(max_length=40, null=True,blank=True)
+    latitude = models.CharField(max_length=40, null=True,blank=True)
 
     def __str__(self):
         return self.full_name
@@ -48,7 +48,7 @@ class Order(models.Model):
         for i in range(6):
             code += random.choice(word)
         self.code = code
-        print(code)
+        # print(code)
         self.save()
         return code
     @property
@@ -65,8 +65,8 @@ class Passenger(models.Model):
     driver = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     full_name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=13)
-    tg_akkount = models.CharField(max_length=30, null=True)
-    add_date = models.DateTimeField(auto_now_add=True)
+    tg_akkount = models.CharField(max_length=30, null=True,blank=True)
+    add_date = models.DateTimeField(auto_now_add=True,blank=True)
     user_status = models.CharField(max_length=40, default="Tasdiqlanmagan", choices=status)
 
     def __str__(self):

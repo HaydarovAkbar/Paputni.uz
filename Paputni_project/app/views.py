@@ -3,7 +3,7 @@ from rest_framework.routers import Response
 from rest_framework.viewsets import ModelViewSet
 from .serializers import *
 from .models import *
-
+import datetime
 
 class OrderView(ModelViewSet):
     queryset = Order.objects.all()
@@ -12,30 +12,6 @@ class OrderView(ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            # datas = serializer.validated_data
-            # print(datas["full_name"])
-            # a = Order.objects.create(
-            #     full_nume=datas["full_name"],
-            #     phone_number=datas["phone_number"],
-            #     telegram_akkount=datas["telegram_akkount"],
-            #     # add_date=datas["add_date"],
-            #     about_car=datas["about_car"],
-            #     departure_station=datas["departure_station"],  # jo'nab ketish bekati
-            #     arrival_station=datas["arrival_station"],  # yetib borish bekati
-            #     departure_time=datas["departure_time"],  # jo'nab ketish vaqti
-            #     number_of_vacancies=datas["number_of_vacancies"],  # bo'sh o'rinlar soni
-            #     sex=datas["sex"],
-            #     price=datas["price"],
-            #     car_picture=datas["car_picture"],
-            #     description=datas["description"],
-            #     code=code_generatsion(),
-            #     # edited_date=datas["edited_date"],
-            #     longitude=datas["longitude"],
-            #     latitude=datas["latitude"],
-            # )
-            # a.save()
-            # serializer.data["code"] = Order.code_generatsion
-            # print(serializer.data)
             serializer.save()
             instanse = Order.objects.get(id=serializer.data['id'])
             a = instanse.code_generatsion
@@ -55,6 +31,23 @@ class PassangerView(ModelViewSet):
     queryset = Passenger.objects.all()
     serializer_class = PassangerSerializer
 
+    def update(self, request, *args, **kwargs):
+        """Tasdiqlash bulsa kamaytiradigan funksiya"""
+        # print(request.data,kwargs)
+        idd = kwargs["pk"]
+        obb = Passenger.objects.filter(id=idd)
+        if request.data["user_status"] == "Tasdiqlangan":
+            user_driver = Order.objects.filter(id=request.data["driver"])
+            quantity = user_driver.values_list("number_of_vacancies")[0][0]
+            if int(user_driver.values_list("number_of_vacancies")[0][0]) > 0:
+                quantity -= 1
+                user_driver.update(number_of_vacancies=quantity)
+                obb.delete()
+            else:
+                user_driver.delete()
+                return Response({"status":"Update bo'lmadi"})
+
+        return Response({"status":"Update bo'ldi"})
     def retrieve(self, request, *args, **kwargs):
         """
         Driverni ID si orqali Yo'lovchilarni chiqarib beradi
@@ -77,7 +70,11 @@ class OrderFilterView(ModelViewSet):
         year = request.data["departure_time"][:4]
         month = request.data["departure_time"][5:7]
         day = request.data["departure_time"][8:10]
-
+        time_now = datetime.datetime.now().date()
+        # malumotlarni tozalab turadigan algoritm
+        for i in self.queryset:
+            if i.departure_time.date() <= time_now:
+                i.delete()
         result = self.queryset.filter(departure_station=request.data["departure_station"]).filter(
             arrival_station=request.data["arrival_station"]).filter(departure_time__year=year).filter(
             departure_time__month=month).filter(departure_time__day=day)
