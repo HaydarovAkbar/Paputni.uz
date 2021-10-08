@@ -74,7 +74,10 @@ class OrderFilterView(ModelViewSet):
         # malumotlarni tozalab turadigan algoritm
         for i in self.queryset:
             if i.departure_time.date() <= time_now:
-                i.delete()
+                try:
+                    i.delete()
+                except Exception as e:
+                    print(e)
         result = self.queryset.filter(departure_station=request.data["departure_station"]).filter(
             arrival_station=request.data["arrival_station"]).filter(departure_time__year=year).filter(
             departure_time__month=month).filter(departure_time__day=day)

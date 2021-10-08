@@ -1,0 +1,1 @@
+web: gunicorn Paputni_project.wsgi
