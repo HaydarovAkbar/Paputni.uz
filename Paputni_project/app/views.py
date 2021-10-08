@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http.response import JsonResponse
 from rest_framework.routers import Response
 from rest_framework.viewsets import ModelViewSet
 from .serializers import *
@@ -20,11 +21,10 @@ class OrderView(ModelViewSet):
             }
             return Response({"code": result})
         return Response({"status": "Error!"})
-    # def retrieve(self, request, *args, **kwargs):
-    #     print(request.data)
-    #     year,month,day = request.data["time"]
-    #
-    #     order_all = Order.objects.filter()
+    def retrieve(self, request, *args, **kwargs):
+        order_all = self.queryset.filter(code = kwargs["pk"])
+        serializer = OrderSerializer(order_all,many=True)
+        return Response(serializer.data)
 
 
 class PassangerView(ModelViewSet):
@@ -73,7 +73,8 @@ class OrderFilterView(ModelViewSet):
         time_now = datetime.datetime.now().date()
         # malumotlarni tozalab turadigan algoritm
         for i in self.queryset:
-            if i.departure_time.date() <= time_now:
+            print(i.departure_time.date(),time_now)
+            if i.departure_time.date() and i.departure_time.date() <= time_now:
                 try:
                     i.delete()
                 except Exception as e:
@@ -81,8 +82,31 @@ class OrderFilterView(ModelViewSet):
         result = self.queryset.filter(departure_station=request.data["departure_station"]).filter(
             arrival_station=request.data["arrival_station"]).filter(departure_time__year=year).filter(
             departure_time__month=month).filter(departure_time__day=day)
-        serializer = self.get_serializer(result, many=True)
-
+        data = []
+        for j in result:
+            a = data.append({
+                "id":j.id,
+                "full_name":j.full_name,
+                "phone_number":j.phone_number,
+                "telegram_akkount":j.telegram_akkount,
+                "add_date":j.add_date,
+                "about_car":j.about_car,
+                "departure_station":j.departure_station,
+                "arrival_station":j.arrival_station,
+                "departure_time":j.departure_time,
+                "number_of_vacancies":j.number_of_vacancies,
+                "sex":j.sex,
+                "price":j.price,
+                "car_picture": j.car_picture,
+                "description": j.description,
+            })
+            data.append(a)
+        datas = []
+        for item in data:
+            if item:
+                datas.append(item)
+        print(datas)
+        serializer = OrderSerializer(datas,many=True)
         return Response(serializer.data)
 
 class PassangerStatusView(ModelViewSet):
@@ -106,3 +130,11 @@ class PassangerStatusView(ModelViewSet):
         #     print(instance)
         #     # self.perform_destroy(instance)
         return Response({"status":"O'chirildi"})
+
+# class CodeFilterView(ModelViewSet):
+#     queryset = Order.objects.all()
+#     serializer_class = OrderSerializer
+#     def retrieve(self, request, *args, **kwargs):
+#         code = kwargs["pk"]
+#
+

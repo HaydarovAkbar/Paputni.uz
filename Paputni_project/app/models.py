@@ -33,7 +33,10 @@ class Order(models.Model):
     latitude = models.CharField(max_length=40, null=True,blank=True)
 
     def __str__(self):
-        return self.full_name
+        try:
+            return self.full_name
+        except:
+            return ""
 
     @property
     def image_URL(self):
