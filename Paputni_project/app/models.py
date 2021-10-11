@@ -14,17 +14,17 @@ class Order(models.Model):
         ("Ayol", "Ayol"),
         ("Ixtiyoriy", "Ixtiyoriy"),
     }
-    full_name = models.CharField(max_length=200, null=True)
-    phone_number = models.CharField(max_length=13, null=True)  # +998990010101
-    telegram_akkount = models.CharField(max_length=300, null=True)  # https://t.me/Poputni_uz
-    add_date = models.DateTimeField(auto_now_add=True, null=True,blank=True)
-    about_car = models.CharField(max_length=1000, null=True, blank=True)
-    departure_station = models.CharField(max_length=200,null=True)  # jo'nab ketish bekati
-    arrival_station = models.CharField(max_length=200,null=True)  # yetib borish bekati
+    full_name = models.CharField(max_length=200)
+    phone_number = models.CharField(max_length=13)  # +998990010101
+    telegram_akkount = models.CharField(max_length=300)  # https://t.me/Poputni_uz
+    add_date = models.DateTimeField(auto_now_add=True,blank=True)
+    about_car = models.CharField(max_length=1000,blank=True)
+    departure_station = models.CharField(max_length=200)  # jo'nab ketish bekati
+    arrival_station = models.CharField(max_length=200)  # yetib borish bekati
     departure_time = models.DateTimeField(null=True)  # jo'nab ketish vaqti
     number_of_vacancies = models.IntegerField(default=1,null=True)  # bo'sh o'rinlar soni
     sex = models.CharField(max_length=50, default="Ixtiyoriy", choices=jinsi)
-    price = models.CharField(max_length=200,null=True)
+    price = models.CharField(max_length=200)
     car_picture = models.ImageField(null=True)
     description = models.CharField(max_length=200, null=True, blank=True)
     code = models.CharField(max_length=6, default="000000", null=True, blank=True)
